@@ -6,7 +6,6 @@ const BlogForm = ({ createBlog }) => {
   const [blogAuthor, setBlogAuthor] = useState('')
   const [blogUrl, setBlogUrl] = useState('')
 
-
   const handleTitleChange = (event) => {
     setBlogTitle(event.target.value)
   }
@@ -35,15 +34,14 @@ const BlogForm = ({ createBlog }) => {
   return (
     <div>
       <form onSubmit={addBlog}>
-
         <h2>create new</h2>
         <div>
           title:
           <input
             value={blogTitle}
             onChange={handleTitleChange}
-            id='blog-title-input'
-            data-cy='blog-title-input'
+            id="blog-title-input"
+            data-cy="blog-title-input"
           />
         </div>
         <div>
@@ -51,8 +49,8 @@ const BlogForm = ({ createBlog }) => {
           <input
             value={blogAuthor}
             onChange={handleAuthorChange}
-            id='blog-author-input'
-            data-cy='blog-author-input'
+            id="blog-author-input"
+            data-cy="blog-author-input"
           />
         </div>
         <div>
@@ -60,13 +58,12 @@ const BlogForm = ({ createBlog }) => {
           <input
             value={blogUrl}
             onChange={handleUrlChange}
-            id='blog-url-input'
-            data-cy='blog-url-input'
+            id="blog-url-input"
+            data-cy="blog-url-input"
           />
-          <button
-            type='submit'
-            data-cy='create-blog-button'
-          >create</button>
+          <button type="submit" data-cy="create-blog-button">
+            create
+          </button>
         </div>
       </form>
     </div>
@@ -74,7 +71,7 @@ const BlogForm = ({ createBlog }) => {
 }
 
 BlogForm.propTypes = {
-  createBlog: PropTypes.func.isRequired
+  createBlog: PropTypes.func.isRequired,
 }
 
 export default BlogForm

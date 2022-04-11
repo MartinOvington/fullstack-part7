@@ -9,7 +9,7 @@ describe('blog element tests', () => {
     title: 'test blog',
     author: 'test author',
     url: 'www.google.com',
-    likes: 0
+    likes: 0,
   }
 
   test('initially renders only title and author', () => {
@@ -37,7 +37,6 @@ describe('blog element tests', () => {
   })
 
   test('clicking like button twice calls handler twice', () => {
-
     const mockHandler = jest.fn()
 
     render(<Blog blog={note} increaseLikes={mockHandler} />)
