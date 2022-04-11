@@ -5,22 +5,20 @@ const initialBlogs = [
   {
     title: 'JavaScript for Geniuses',
     url: 'www.javascripverygood.com',
-    likes: 10
+    likes: 10,
   },
   {
     title: 'Python is a Snake',
     url: 'www.pythonisasnake.com',
-    likes: 20
-  }
+    likes: 20,
+  },
 ]
 
 const nonExistingId = async () => {
-  const blog = new Blog(
-    { 
-      title: 'willremovethissoon',
-      url: 'www.toBeDeleted.com'
-    }
-  )
+  const blog = new Blog({
+    title: 'willremovethissoon',
+    url: 'www.toBeDeleted.com',
+  })
   await blog.save()
   await blog.remove()
 
@@ -29,7 +27,7 @@ const nonExistingId = async () => {
 
 const blogsInDb = async () => {
   const blogs = await Blog.find({})
-  return blogs.map(blog => blog.toJSON())
+  return blogs.map((blog) => blog.toJSON())
 }
 
 const getBlogById = async (id) => {
@@ -39,12 +37,12 @@ const getBlogById = async (id) => {
 
 const usersinDb = async () => {
   const users = await User.find({})
-  return users.map(u => u.toJSON())
+  return users.map((u) => u.toJSON())
 }
 module.exports = {
   initialBlogs,
-  nonExistingId, 
-  blogsInDb, 
-  getBlogById, 
-  usersinDb
+  nonExistingId,
+  blogsInDb,
+  getBlogById,
+  usersinDb,
 }

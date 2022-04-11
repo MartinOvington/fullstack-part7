@@ -15,7 +15,7 @@ const tokenExtractor = (request, response, next) => {
   if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
     response.token = authorization.substring(7)
   } else {
-    response.token =  null
+    response.token = null
   }
   next()
 }
@@ -24,14 +24,12 @@ const userExtractor = async (request, response, next) => {
   const decodedToken = jwt.verify(response.token, process.env.SECRET)
   if (!decodedToken.id) {
     response.user = null
-  }
-  else {
+  } else {
     response.user = await User.findById(decodedToken.id)
   }
 
   next()
 }
-
 
 const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: 'unknown endpoint' })
@@ -45,9 +43,9 @@ const errorHandler = (error, request, response, next) => {
   } else if (error.name === 'ValidationError') {
     return response.status(400).json({ error: error.message })
   } else if (error.name === 'JsonWebTokenError') {
-    return response.status(401).json({ error:'invalid token' })
+    return response.status(401).json({ error: 'invalid token' })
   } else if (error.name === 'TokenExpiredError') {
-    return response.status(401).json({ error:'token expired' })
+    return response.status(401).json({ error: 'token expired' })
   }
 
   next(error)
@@ -58,5 +56,5 @@ module.exports = {
   tokenExtractor,
   userExtractor,
   unknownEndpoint,
-  errorHandler
+  errorHandler,
 }

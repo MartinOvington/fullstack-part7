@@ -15,12 +15,12 @@ beforeAll(async () => {
   const newUser = {
     username: 'jerry',
     name: 'Jerry Seinfeld',
-    password: 'testpassword'
+    password: 'testpassword',
   }
 
   const login = {
     username: 'jerry',
-    password: 'testpassword'
+    password: 'testpassword',
   }
 
   const userResponse = await api
@@ -31,28 +31,25 @@ beforeAll(async () => {
 
   userId = userResponse.body._id
 
-  const loginResponse = await api
-    .post('/api/login')
-    .send(login)
-    .expect(200)
-  
+  const loginResponse = await api.post('/api/login').send(login).expect(200)
+
   loginToken = loginResponse.body.token
 })
 
-beforeEach(async () => {  
+beforeEach(async () => {
   await Blog.deleteMany({})
   await Blog.insertMany(helper.initialBlogs)
 })
 
 describe('when there are some blogs saved', () => {
   test('blogs are returned as json', async () => {
-    await api.get('/api/blogs')
+    await api
+      .get('/api/blogs')
       .expect(200)
       .expect('Content-Type', /application\/json/)
   })
 
   test('all blogs are returned', async () => {
-  
     const response = await api.get('/api/blogs')
 
     expect(response.body).toHaveLength(helper.initialBlogs.length)
@@ -70,10 +67,10 @@ describe('when there are some blogs saved', () => {
 describe('adding a new blog', () => {
   test('POST-ing a blog creates a new blog in the database', async () => {
     const newBlog = {
-      'title' : 'This blog should be added', 
-      'url': 'https://www.newBlog.com',
-      'likes': 100,
-      'user': userId
+      title: 'This blog should be added',
+      url: 'https://www.newBlog.com',
+      likes: 100,
+      user: userId,
     }
 
     await api
@@ -85,18 +82,16 @@ describe('adding a new blog', () => {
 
     const blogs = await helper.blogsInDb()
 
-    const titles = blogs.map(r => r.title)
+    const titles = blogs.map((r) => r.title)
 
     expect(blogs).toHaveLength(helper.initialBlogs.length + 1)
-    expect(titles).toContain(
-      'This blog should be added'
-    )
+    expect(titles).toContain('This blog should be added')
   })
 
   test('adding a blog with missing likes defaults to 0 likes', async () => {
     const newBlog = {
-      'title' : 'Zero likes blog', 
-      'url': 'https://www.unpopularblog.com',
+      title: 'Zero likes blog',
+      url: 'https://www.unpopularblog.com',
     }
 
     await api
@@ -108,7 +103,7 @@ describe('adding a new blog', () => {
 
     const blogs = await helper.blogsInDb()
 
-    const findTitle = (blog) => (blog.title === 'Zero likes blog')
+    const findTitle = (blog) => blog.title === 'Zero likes blog'
 
     const foundBlog = blogs.find(findTitle)
     expect(blogs).toHaveLength(helper.initialBlogs.length + 1)
@@ -117,14 +112,14 @@ describe('adding a new blog', () => {
   })
 
   test('adding a blog with missing title or url gets response 400', async () => {
-    const missingTitle = { 
-      'url': 'https://www.notitle.com',
-      'likes': 2,
+    const missingTitle = {
+      url: 'https://www.notitle.com',
+      likes: 2,
     }
 
     const missingUrl = {
-      'title': 'missing url',
-      'likes': 5,
+      title: 'missing url',
+      likes: 5,
     }
 
     await api
@@ -146,15 +141,12 @@ describe('adding a new blog', () => {
 
   test('adding a blog without toke fails with status code 401', async () => {
     const blogToAdd = {
-      'title': 'should not be added',
-      'url': 'https://www.google.com',
-      'likes': 2,
+      title: 'should not be added',
+      url: 'https://www.google.com',
+      likes: 2,
     }
 
-    await api
-      .post('/api/blogs')
-      .send(blogToAdd)
-      .expect(401)
+    await api.post('/api/blogs').send(blogToAdd).expect(401)
 
     const blogs = await helper.blogsInDb()
 
@@ -174,9 +166,9 @@ describe('deletion of a blog', () => {
 
     const blogsAtEnd = await helper.blogsInDb()
 
-    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length -1)
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length - 1)
 
-    const titles = blogsAtEnd.map(b => b.title)
+    const titles = blogsAtEnd.map((b) => b.title)
 
     expect(titles).not.toContain(blogToDelete.title)
   })
@@ -185,9 +177,7 @@ describe('deletion of a blog', () => {
 test('deletion of an invalid blog id with valid token has status code 401', async () => {
   const nonExistingId = await helper.nonExistingId()
 
-  await api
-    .delete(`/api/blogs/${nonExistingId}`)
-    .expect(401)
+  await api.delete(`/api/blogs/${nonExistingId}`).expect(401)
 
   const blogsAtEnd = await helper.blogsInDb()
 
@@ -195,7 +185,7 @@ test('deletion of an invalid blog id with valid token has status code 401', asyn
 })
 
 describe('updating a blog', () => {
-  test('updating a blog\'s likes updates DB and gets status code 200', async () => {
+  test("updating a blog's likes updates DB and gets status code 200", async () => {
     const initialBlogs = await helper.blogsInDb()
     const blogToUpdate = initialBlogs[0]
 
@@ -211,18 +201,14 @@ describe('updating a blog', () => {
 
   test('updating an invalid id gives status code 404', async () => {
     const nonExistingId = await helper.nonExistingId()
-    const blog = 
-    {   
-      'title': 'updated blog',
-      'author': 'moi',
-      'url': 'www.updatedurl.com',
-      'likes': 40
+    const blog = {
+      title: 'updated blog',
+      author: 'moi',
+      url: 'www.updatedurl.com',
+      likes: 40,
     }
 
-    await api
-      .put(`/api/blogs/${nonExistingId}`)
-      .send(blog)
-      .expect(404)
+    await api.put(`/api/blogs/${nonExistingId}`).send(blog).expect(404)
   })
 })
 

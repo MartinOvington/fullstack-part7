@@ -19,9 +19,7 @@ const favoriteBlog = (blogs) => {
       return sum
     }
   }
-  return blogs.length === 0
-    ? null
-    : blogs.reduce(reducer, blogs[0])
+  return blogs.length === 0 ? null : blogs.reduce(reducer, blogs[0])
 }
 
 const mostBlogs = (blogs) => {
@@ -33,7 +31,7 @@ const mostBlogs = (blogs) => {
       sum.push({ author: item.author, blogs: 1 })
     }
     return sum
-  } 
+  }
 
   const blogCounts = blogs.reduce(reducer, [])
 
@@ -58,7 +56,7 @@ const mostLikes = (blogs) => {
       sum.push({ author: item.author, likes: item.likes })
     }
     return sum
-  } 
+  }
 
   const likeCounts = blogs.reduce(reducer, [])
 
@@ -77,5 +75,5 @@ module.exports = {
   totalLikes,
   favoriteBlog,
   mostBlogs,
-  mostLikes
+  mostLikes,
 }

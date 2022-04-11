@@ -22,7 +22,7 @@ describe('when there is initially one user in the db', () => {
     const newUser = {
       username: 'jerry',
       name: 'Jerry Seinfeld',
-      password: 'testpassword'
+      password: 'testpassword',
     }
 
     await api
@@ -34,7 +34,7 @@ describe('when there is initially one user in the db', () => {
     const usersAtEnd = await helper.usersinDb()
     expect(usersAtEnd).toHaveLength(usersAtStart.length + 1)
 
-    const usernames = usersAtEnd.map(u => u.username)
+    const usernames = usersAtEnd.map((u) => u.username)
     expect(usernames).toContain(newUser.username)
   })
 
@@ -44,7 +44,7 @@ describe('when there is initially one user in the db', () => {
     const newUser = {
       username: 'superuser',
       name: 'John',
-      password: 'admin'
+      password: 'admin',
     }
 
     const result = await api
@@ -65,7 +65,7 @@ describe('when there is initially one user in the db', () => {
     const newUser = {
       username: 'newuser',
       name: 'Marty',
-      password: '12'
+      password: '12',
     }
 
     const result = await api
@@ -74,7 +74,9 @@ describe('when there is initially one user in the db', () => {
       .expect(400)
       .expect('Content-Type', /application\/json/)
 
-    expect(result.body.error).toContain('password must be at least 3 characters long')
+    expect(result.body.error).toContain(
+      'password must be at least 3 characters long'
+    )
 
     const usersAtEnd = await helper.usersinDb()
     expect(usersAtEnd).toEqual(usersAtStart)
@@ -85,7 +87,7 @@ describe('when there is initially one user in the db', () => {
 
     const newUser = {
       name: 'Marty',
-      password: '12345'
+      password: '12345',
     }
 
     const result = await api
