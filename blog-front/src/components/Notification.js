@@ -8,8 +8,7 @@ const Notification = () => {
   if (message === '') {
     return null
   }
-  console.log('here')
-  console.log(message)
+
   return <div className={msgType}>{message}</div>
 }
 

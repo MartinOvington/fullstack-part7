@@ -13,19 +13,21 @@ import {
   clearNotification,
 } from './reducers/notificationReducer'
 
+import { createBlog, setBlogs } from './reducers/blogReducer'
+
 const App = () => {
-  const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
 
   const dispatch = useDispatch()
-  const message = useSelector((state) => state.message)
-  const msgType = useSelector((state) => state.msgType)
+  const blogs = useSelector(({ blogs }) => blogs)
+  const message = useSelector(({ notification }) => notification.message)
+  const msgType = useSelector(({ notification }) => notification.msgType)
 
   useEffect(() => {
     blogService.getAll().then((blogs) => {
-      setBlogs(blogs)
+      dispatch(setBlogs(blogs))
     })
   }, [])
 
@@ -58,7 +60,6 @@ const App = () => {
       window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
 
       blogService.setToken(user.token)
-      setMessage(null)
       setUser(user)
       setUsername('')
       setPassword('')
@@ -88,7 +89,7 @@ const App = () => {
         ${blogObject.author === undefined ? '' : blogObject.author}`,
         'updateMsg'
       )
-      setBlogs(blogs.concat(returnedBlog))
+      createBlog(returnedBlog)
     } catch (exception) {
       createNotification('blog creation failed', 'error')
     }
@@ -100,10 +101,13 @@ const App = () => {
 
     try {
       const returnedBlog = await blogService.update(id, changedBlog)
-      setBlogs(blogs.map((blog) => (blog.id !== id ? blog : returnedBlog)))
+      console.log('here')
+      dispatch(
+        setBlogs(blogs.map((blog) => (blog.id !== id ? blog : returnedBlog)))
+      )
     } catch (err) {
+      dispatch(setBlogs(blogs.filter((n) => n.id !== id)))
       createNotification('was already removed from server', 'error')
-      setBlogs(blogs.filter((n) => n.id !== id))
     }
   }
 
@@ -112,12 +116,12 @@ const App = () => {
     try {
       if (window.confirm(`Remove ${blog.title} by ${blog.author}`)) {
         await blogService.deleteBlog(id)
-        setBlogs(blogs.filter((b) => b.id !== id))
+        dispatch(setBlogs(blogs.filter((b) => b.id !== id)))
         createNotification('blog removed', 'updateMsg')
       }
     } catch (err) {
+      dispatch(setBlogs(blogs.filter((b) => b.id !== id)))
       createNotification('was already removed from server', 'error')
-      setBlogs(blogs.filter((b) => b.id !== id))
     }
   }
 
@@ -162,17 +166,15 @@ const App = () => {
           <Togglable buttonLabel="new blog" ref={blogFormRef}>
             <BlogForm createBlog={addBlog} />
           </Togglable>
-          {blogs
-            .sort((b1, b2) => b2.likes - b1.likes)
-            .map((blog) => (
-              <Blog
-                key={blog.id}
-                blog={blog}
-                increaseLikes={() => increaseLikes(blog.id)}
-                deleteBlog={() => deleteBlog(blog.id)}
-                username={user.username}
-              />
-            ))}
+          {blogs.map((blog) => (
+            <Blog
+              key={blog.id}
+              blog={blog}
+              increaseLikes={() => increaseLikes(blog.id)}
+              deleteBlog={() => deleteBlog(blog.id)}
+              username={user.username}
+            />
+          ))}
         </div>
       )}
     </div>
