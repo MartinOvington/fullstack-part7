@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
-import Blog from './components/Blog'
+import Blogs from './components/Blogs'
 import Notification from './components/Notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
@@ -16,7 +16,6 @@ const App = () => {
   const [password, setPassword] = useState('')
 
   const dispatch = useDispatch()
-  const blogs = useSelector(({ blogs }) => blogs)
   const user = useSelector(({ user }) => user)
   const notification = useNotification()
 
@@ -82,41 +81,6 @@ const App = () => {
     }
   }
 
-  const increaseLikes = async (id) => {
-    const blog = blogs.find((b) => b.id === id)
-    const changedBlog = { ...blog, likes: blog.likes + 1 }
-
-    try {
-      const returnedBlog = await blogService.update(id, changedBlog)
-      dispatch(
-        setBlogs(blogs.map((blog) => (blog.id !== id ? blog : returnedBlog)))
-      )
-    } catch (err) {
-      dispatch(setBlogs(blogs.filter((n) => n.id !== id)))
-      notification.createNotification(
-        'was already removed from server',
-        'error'
-      )
-    }
-  }
-
-  const deleteBlog = async (id) => {
-    const blog = blogs.find((b) => b.id === id)
-    try {
-      if (window.confirm(`Remove ${blog.title} by ${blog.author}`)) {
-        await blogService.deleteBlog(id)
-        dispatch(setBlogs(blogs.filter((b) => b.id !== id)))
-        notification.createNotification('blog removed', 'updateMsg')
-      }
-    } catch (err) {
-      dispatch(setBlogs(blogs.filter((b) => b.id !== id)))
-      notification.createNotification(
-        'was already removed from server',
-        'error'
-      )
-    }
-  }
-
   const loginForm = () => (
     <form onSubmit={handleLogin}>
       <div>
@@ -158,15 +122,7 @@ const App = () => {
           <Togglable buttonLabel="new blog" ref={blogFormRef}>
             <BlogForm createBlog={addBlog} />
           </Togglable>
-          {blogs.map((blog) => (
-            <Blog
-              key={blog.id}
-              blog={blog}
-              increaseLikes={() => increaseLikes(blog.id)}
-              deleteBlog={() => deleteBlog(blog.id)}
-              username={user.username}
-            />
-          ))}
+          <Blogs />
         </div>
       )}
     </div>
