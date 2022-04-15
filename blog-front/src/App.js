@@ -7,23 +7,18 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import Togglable from './components/Toggleable'
 import BlogForm from './components/BlogForm'
-import {
-  setMessage,
-  setMsgType,
-  clearNotification,
-} from './reducers/notificationReducer'
-
 import { createBlog, setBlogs } from './reducers/blogReducer'
+import { setUser } from './reducers/userReducer'
+import { useNotification } from './hooks'
 
 const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
 
   const dispatch = useDispatch()
   const blogs = useSelector(({ blogs }) => blogs)
-  const message = useSelector(({ notification }) => notification.message)
-  const msgType = useSelector(({ notification }) => notification.msgType)
+  const user = useSelector(({ user }) => user)
+  const notification = useNotification()
 
   useEffect(() => {
     blogService.getAll().then((blogs) => {
@@ -35,18 +30,10 @@ const App = () => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappuser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
-      setUser(user)
+      dispatch(setUser(user))
       blogService.setToken(user.token)
     }
   }, [])
-
-  const createNotification = (message, msgType) => {
-    dispatch(setMsgType(msgType))
-    dispatch(setMessage(message))
-    setTimeout(() => {
-      dispatch(clearNotification())
-    }, 5000)
-  }
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -60,38 +47,38 @@ const App = () => {
       window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
 
       blogService.setToken(user.token)
-      setUser(user)
+      dispatch(setUser(user))
       setUsername('')
       setPassword('')
-      createNotification('logged in', 'updateMsg')
+      notification.createNotification('logged in', 'updateMsg')
     } catch (exception) {
-      createNotification('wrong username or password', 'error')
+      notification.createNotification('wrong username or password', 'error')
     }
   }
 
   const handleLogout = (event) => {
     event.preventDefault()
 
-    setUser(null)
+    dispatch(setUser(null))
     window.localStorage.removeItem('loggedBlogappUser')
     blogService.setToken(null)
-    createNotification('logged out', 'updateMsg')
+    notification.createNotification('logged out', 'updateMsg')
   }
 
   const addBlog = async (blogObject) => {
     blogFormRef.current.toggleVisibility()
     try {
       const returnedBlog = await blogService.create(blogObject)
-      createNotification(
+      notification.createNotification(
         `a new blog 
         ${blogObject.title === undefined ? '' : blogObject.title} 
         by 
         ${blogObject.author === undefined ? '' : blogObject.author}`,
         'updateMsg'
       )
-      createBlog(returnedBlog)
+      dispatch(createBlog(returnedBlog))
     } catch (exception) {
-      createNotification('blog creation failed', 'error')
+      notification.createNotification('blog creation failed', 'error')
     }
   }
 
@@ -101,13 +88,15 @@ const App = () => {
 
     try {
       const returnedBlog = await blogService.update(id, changedBlog)
-      console.log('here')
       dispatch(
         setBlogs(blogs.map((blog) => (blog.id !== id ? blog : returnedBlog)))
       )
     } catch (err) {
       dispatch(setBlogs(blogs.filter((n) => n.id !== id)))
-      createNotification('was already removed from server', 'error')
+      notification.createNotification(
+        'was already removed from server',
+        'error'
+      )
     }
   }
 
@@ -117,11 +106,14 @@ const App = () => {
       if (window.confirm(`Remove ${blog.title} by ${blog.author}`)) {
         await blogService.deleteBlog(id)
         dispatch(setBlogs(blogs.filter((b) => b.id !== id)))
-        createNotification('blog removed', 'updateMsg')
+        notification.createNotification('blog removed', 'updateMsg')
       }
     } catch (err) {
       dispatch(setBlogs(blogs.filter((b) => b.id !== id)))
-      createNotification('was already removed from server', 'error')
+      notification.createNotification(
+        'was already removed from server',
+        'error'
+      )
     }
   }
 
@@ -156,7 +148,7 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
-      <Notification message={message} msgType={msgType} />
+      <Notification />
       {user === null ? (
         loginForm()
       ) : (
