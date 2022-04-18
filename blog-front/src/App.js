@@ -2,23 +2,31 @@ import React, { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import Blogs from './components/Blogs'
+import Users from './components/Users'
 import Notification from './components/Notification'
 import blogService from './services/blogs'
+import usersService from './services/users'
 import Togglable from './components/Toggleable'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
 import { createBlog, setBlogs } from './reducers/blogReducer'
 import { setUser } from './reducers/userReducer'
+import { setUsers } from './reducers/usersReducer'
 import { useNotification } from './hooks'
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 
 const App = () => {
   const dispatch = useDispatch()
   const user = useSelector(({ user }) => user)
   const createNotification = useNotification()
+  const blogFormRef = useRef()
 
   useEffect(() => {
     blogService.getAll().then((blogs) => {
       dispatch(setBlogs(blogs))
+    })
+    usersService.getAll().then((users) => {
+      dispatch(setUsers(users))
     })
   }, [])
 
@@ -57,7 +65,9 @@ const App = () => {
     createNotification('logged out', 'updateMsg')
   }
 
-  const blogFormRef = useRef()
+  const padding = {
+    padding: 5,
+  }
 
   return (
     <div>
@@ -67,14 +77,32 @@ const App = () => {
         <LoginForm />
       </div>
       {user ? (
-        <div>
-          {user.name + ' logged in'}
+        <Router>
+          <div>
+            <Link style={padding} to="/">
+              Blogs
+            </Link>
+            <Link style={padding} to="/users">
+              Users
+            </Link>
+          </div>
+          {user.name} logged in
           <button onClick={handleLogout}>logout</button>
-          <Togglable buttonLabel="new blog" ref={blogFormRef}>
-            <BlogForm createBlog={addBlog} />
-          </Togglable>
-          <Blogs />
-        </div>
+          <Routes>
+            <Route path="/users" element={<Users />} />
+            <Route
+              path="/"
+              element={
+                <div>
+                  <Togglable buttonLabel="new blog" ref={blogFormRef}>
+                    <BlogForm createBlog={addBlog} />
+                  </Togglable>
+                  <Blogs />
+                </div>
+              }
+            />
+          </Routes>
+        </Router>
       ) : null}
     </div>
   )
