@@ -6,7 +6,7 @@ import Blog from './Blog'
 
 const Blogs = () => {
   const dispatch = useDispatch()
-  const notification = useNotification()
+  const createNotification = useNotification()
   const user = useSelector(({ user }) => user)
   const blogs = useSelector(({ blogs }) => blogs)
   const sortedBlogs = [...blogs].sort((a, b) => a.likes < b.likes)
@@ -24,10 +24,7 @@ const Blogs = () => {
       )
     } catch (err) {
       dispatch(setBlogs(sortedBlogs.filter((n) => n.id !== id)))
-      notification.createNotification(
-        'was already removed from server',
-        'error'
-      )
+      createNotification('was already removed from server', 'error')
     }
   }
 
@@ -37,14 +34,11 @@ const Blogs = () => {
       if (window.confirm(`Remove ${blog.title} by ${blog.author}`)) {
         await blogService.deleteBlog(id)
         dispatch(setBlogs(sortedBlogs.filter((b) => b.id !== id)))
-        notification.createNotification('blog removed', 'updateMsg')
+        createNotification('blog removed', 'updateMsg')
       }
     } catch (err) {
       dispatch(setBlogs(sortedBlogs.filter((b) => b.id !== id)))
-      notification.createNotification(
-        'was already removed from server',
-        'error'
-      )
+      createNotification('was already removed from server', 'error')
     }
   }
 

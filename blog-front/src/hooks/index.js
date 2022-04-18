@@ -16,7 +16,5 @@ export const useNotification = () => {
     }, 5000)
   }
 
-  return {
-    createNotification,
-  }
+  return createNotification
 }

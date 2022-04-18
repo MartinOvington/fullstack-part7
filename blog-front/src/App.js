@@ -1,23 +1,20 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import Blogs from './components/Blogs'
 import Notification from './components/Notification'
 import blogService from './services/blogs'
-import loginService from './services/login'
 import Togglable from './components/Toggleable'
 import BlogForm from './components/BlogForm'
+import LoginForm from './components/LoginForm'
 import { createBlog, setBlogs } from './reducers/blogReducer'
 import { setUser } from './reducers/userReducer'
 import { useNotification } from './hooks'
 
 const App = () => {
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-
   const dispatch = useDispatch()
   const user = useSelector(({ user }) => user)
-  const notification = useNotification()
+  const createNotification = useNotification()
 
   useEffect(() => {
     blogService.getAll().then((blogs) => {
@@ -34,24 +31,20 @@ const App = () => {
     }
   }, [])
 
-  const handleLogin = async (event) => {
-    event.preventDefault()
-
+  const addBlog = async (blogObject) => {
+    blogFormRef.current.toggleVisibility()
     try {
-      const user = await loginService.login({
-        username,
-        password,
-      })
-
-      window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
-
-      blogService.setToken(user.token)
-      dispatch(setUser(user))
-      setUsername('')
-      setPassword('')
-      notification.createNotification('logged in', 'updateMsg')
+      const returnedBlog = await blogService.create(blogObject)
+      createNotification(
+        `a new blog 
+        ${blogObject.title === undefined ? '' : blogObject.title} 
+        by 
+        ${blogObject.author === undefined ? '' : blogObject.author}`,
+        'updateMsg'
+      )
+      dispatch(createBlog(returnedBlog))
     } catch (exception) {
-      notification.createNotification('wrong username or password', 'error')
+      createNotification('blog creation failed', 'error')
     }
   }
 
@@ -61,51 +54,8 @@ const App = () => {
     dispatch(setUser(null))
     window.localStorage.removeItem('loggedBlogappUser')
     blogService.setToken(null)
-    notification.createNotification('logged out', 'updateMsg')
+    createNotification('logged out', 'updateMsg')
   }
-
-  const addBlog = async (blogObject) => {
-    blogFormRef.current.toggleVisibility()
-    try {
-      const returnedBlog = await blogService.create(blogObject)
-      notification.createNotification(
-        `a new blog 
-        ${blogObject.title === undefined ? '' : blogObject.title} 
-        by 
-        ${blogObject.author === undefined ? '' : blogObject.author}`,
-        'updateMsg'
-      )
-      dispatch(createBlog(returnedBlog))
-    } catch (exception) {
-      notification.createNotification('blog creation failed', 'error')
-    }
-  }
-
-  const loginForm = () => (
-    <form onSubmit={handleLogin}>
-      <div>
-        username
-        <input
-          type="text"
-          value={username}
-          name="Username"
-          onChange={({ target }) => setUsername(target.value)}
-          data-cy="username-input"
-        />
-      </div>
-      <div>
-        password
-        <input
-          type="password"
-          value={password}
-          name="Password"
-          onChange={({ target }) => setPassword(target.value)}
-          data-cy="password-input"
-        />
-      </div>
-      <button type="submit">login</button>
-    </form>
-  )
 
   const blogFormRef = useRef()
 
@@ -113,18 +63,19 @@ const App = () => {
     <div>
       <h2>blogs</h2>
       <Notification />
-      {user === null ? (
-        loginForm()
-      ) : (
+      <div style={{ display: user === null ? '' : 'none' }}>
+        <LoginForm />
+      </div>
+      {user ? (
         <div>
-          {user.name} is logged in
+          {user.name + ' logged in'}
           <button onClick={handleLogout}>logout</button>
           <Togglable buttonLabel="new blog" ref={blogFormRef}>
             <BlogForm createBlog={addBlog} />
           </Togglable>
           <Blogs />
         </div>
-      )}
+      ) : null}
     </div>
   )
 }
