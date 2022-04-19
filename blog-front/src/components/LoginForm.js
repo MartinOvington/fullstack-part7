@@ -4,6 +4,7 @@ import { useNotification } from '../hooks'
 import loginService from '../services/login'
 import blogService from '../services/blogs'
 import { setUser } from '../reducers/userReducer'
+import { useNavigate } from 'react-router-dom'
 
 const LoginForm = () => {
   const [username, setUsername] = useState('')
@@ -11,6 +12,7 @@ const LoginForm = () => {
 
   const createNotification = useNotification()
   const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -27,6 +29,7 @@ const LoginForm = () => {
       setPassword('')
       createNotification('logged in', 'updateMsg')
       dispatch(setUser(user))
+      navigate('/')
     } catch (exception) {
       createNotification('wrong username or password', 'error')
     }

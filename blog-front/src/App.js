@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import Blogs from './components/Blogs'
 import Users from './components/Users'
+import User from './components/User'
 import Notification from './components/Notification'
 import blogService from './services/blogs'
 import usersService from './services/users'
@@ -13,11 +14,16 @@ import { createBlog, setBlogs } from './reducers/blogReducer'
 import { setUser } from './reducers/userReducer'
 import { setUsers } from './reducers/usersReducer'
 import { useNotification } from './hooks'
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
+import { Routes, Route, Link, useMatch } from 'react-router-dom'
 
 const App = () => {
   const dispatch = useDispatch()
   const user = useSelector(({ user }) => user)
+  const users = useSelector(({ users }) => users)
+  const match = useMatch('/users/:id')
+  const userParam = match
+    ? users.find((user) => user.id === match.params.id)
+    : null
   const createNotification = useNotification()
   const blogFormRef = useRef()
 
@@ -71,24 +77,23 @@ const App = () => {
 
   return (
     <div>
+      <Link style={padding} to="/">
+        Blogs
+      </Link>
+      <Link style={padding} to="/users">
+        Users
+      </Link>
       <h2>blogs</h2>
       <Notification />
       <div style={{ display: user === null ? '' : 'none' }}>
         <LoginForm />
       </div>
       {user ? (
-        <Router>
-          <div>
-            <Link style={padding} to="/">
-              Blogs
-            </Link>
-            <Link style={padding} to="/users">
-              Users
-            </Link>
-          </div>
+        <div>
           {user.name} logged in
           <button onClick={handleLogout}>logout</button>
           <Routes>
+            <Route path="/users/:id" element={<User user={userParam} />} />
             <Route path="/users" element={<Users />} />
             <Route
               path="/"
@@ -102,7 +107,7 @@ const App = () => {
               }
             />
           </Routes>
-        </Router>
+        </div>
       ) : null}
     </div>
   )
