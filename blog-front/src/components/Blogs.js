@@ -12,21 +12,6 @@ const Blogs = () => {
     borderWidth: 1,
     marginBottom: 5,
   }
-  /*
-  const deleteBlog = async (id) => {
-    const blog = sortedBlogs.find((b) => b.id === id)
-    try {
-      if (window.confirm(`Remove ${blog.title} by ${blog.author}`)) {
-        await blogService.deleteBlog(id)
-        dispatch(setBlogs(sortedBlogs.filter((b) => b.id !== id)))
-        createNotification('blog removed', 'updateMsg')
-      }
-    } catch (err) {
-      dispatch(setBlogs(sortedBlogs.filter((b) => b.id !== id)))
-      createNotification('was already removed from server', 'error')
-    }
-  }
-  */
 
   return (
     <div>

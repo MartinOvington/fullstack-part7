@@ -20,8 +20,8 @@ import { Routes, Route, useMatch } from 'react-router-dom'
 
 const App = () => {
   const dispatch = useDispatch()
-  const user = useSelector(({ user }) => user)
   const users = useSelector(({ users }) => users)
+  const user = useSelector(({ user }) => user)
   const blogs = useSelector(({ blogs }) => blogs)
   const matchUser = useMatch('/users/:id')
   const matchBlog = useMatch('/blogs/:id')
@@ -44,7 +44,7 @@ const App = () => {
   }, [])
 
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedBlogappuser')
+    const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       dispatch(setUser(user))
