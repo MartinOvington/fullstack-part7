@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import Blogs from './components/Blogs'
+import Blog from './components/Blog'
 import Users from './components/Users'
 import User from './components/User'
 import Notification from './components/Notification'
@@ -20,9 +21,14 @@ const App = () => {
   const dispatch = useDispatch()
   const user = useSelector(({ user }) => user)
   const users = useSelector(({ users }) => users)
-  const match = useMatch('/users/:id')
-  const userParam = match
-    ? users.find((user) => user.id === match.params.id)
+  const blogs = useSelector(({ blogs }) => blogs)
+  const matchUser = useMatch('/users/:id')
+  const matchBlog = useMatch('/blogs/:id')
+  const userParam = matchUser
+    ? users.find((user) => user.id === matchUser.params.id)
+    : null
+  const blogParam = matchBlog
+    ? blogs.find((blog) => blog.id === matchBlog.params.id)
     : null
   const createNotification = useNotification()
   const blogFormRef = useRef()
@@ -90,9 +96,10 @@ const App = () => {
       </div>
       {user ? (
         <div>
-          {user.name} logged in
+          <div>{user.name} logged in</div>
           <button onClick={handleLogout}>logout</button>
           <Routes>
+            <Route path="/blogs/:id" element={<Blog blog={blogParam} />} />
             <Route path="/users/:id" element={<User user={userParam} />} />
             <Route path="/users" element={<Users />} />
             <Route
