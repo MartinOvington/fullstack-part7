@@ -11,11 +11,12 @@ import usersService from './services/users'
 import Togglable from './components/Toggleable'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
+import Menu from './components/Menu'
 import { createBlog, setBlogs } from './reducers/blogReducer'
 import { setUser } from './reducers/userReducer'
 import { setUsers } from './reducers/usersReducer'
 import { useNotification } from './hooks'
-import { Routes, Route, Link, useMatch } from 'react-router-dom'
+import { Routes, Route, useMatch } from 'react-router-dom'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -77,18 +78,9 @@ const App = () => {
     createNotification('logged out', 'updateMsg')
   }
 
-  const padding = {
-    padding: 5,
-  }
-
   return (
     <div>
-      <Link style={padding} to="/">
-        Blogs
-      </Link>
-      <Link style={padding} to="/users">
-        Users
-      </Link>
+      <Menu user={user} handleLogout={handleLogout} />
       <h2>blogs</h2>
       <Notification />
       <div style={{ display: user === null ? '' : 'none' }}>
@@ -96,8 +88,6 @@ const App = () => {
       </div>
       {user ? (
         <div>
-          <div>{user.name} logged in</div>
-          <button onClick={handleLogout}>logout</button>
           <Routes>
             <Route path="/blogs/:id" element={<Blog blog={blogParam} />} />
             <Route path="/users/:id" element={<User user={userParam} />} />
