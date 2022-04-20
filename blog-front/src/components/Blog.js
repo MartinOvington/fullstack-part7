@@ -63,6 +63,12 @@ const Blog = ({ blog }) => {
           ''
         )}
       </div>
+      <h3>comments</h3>
+      <ul>
+        {blog.comments.map((comment) => (
+          <li key={Math.random() * 1000}>{comment}</li>
+        ))}
+      </ul>
     </div>
   )
 }
