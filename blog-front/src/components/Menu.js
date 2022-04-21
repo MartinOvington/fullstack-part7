@@ -1,6 +1,10 @@
 import { Link } from 'react-router-dom'
 
 const Menu = ({ user, handleLogout }) => {
+  const color = {
+    backgroundColor: '#cccccc',
+  }
+
   const padding = {
     padding: 5,
   }
@@ -18,7 +22,7 @@ const Menu = ({ user, handleLogout }) => {
   }
 
   return (
-    <div>
+    <div style={color}>
       <Link style={padding} to="/">
         Blogs
       </Link>
