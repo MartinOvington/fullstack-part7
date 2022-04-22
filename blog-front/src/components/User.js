@@ -1,14 +1,15 @@
 /* eslint-disable no-extra-semi */
+import { List, ListItem } from '@material-ui/core'
 const User = ({ user }) => {
   return (
     <div>
       <h2>{user.name}</h2>
-      <h3>added blogs</h3>
-      <ul>
+      <h3>Added blogs</h3>
+      <List dense={false}>
         {user.blogs.map((blog) => (
-          <li key={blog.id}>{blog.title}</li>
+          <ListItem key={blog.id}>{blog.title}</ListItem>
         ))}
-      </ul>
+      </List>
     </div>
   )
 }

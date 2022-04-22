@@ -1,4 +1,5 @@
 import { useSelector } from 'react-redux'
+import { Alert } from '@material-ui/lab'
 
 // msgType is 'error' or 'updateMsg'
 const Notification = () => {
@@ -9,7 +10,14 @@ const Notification = () => {
     return null
   }
 
-  return <div className={msgType}>{message}</div>
+  // eslint-disable-next-line quotes
+  const severity = msgType === 'error' ? 'error' : 'success'
+
+  return (
+    <Alert variant="filled" severity={severity}>
+      {message}
+    </Alert>
+  )
 }
 
 export default Notification

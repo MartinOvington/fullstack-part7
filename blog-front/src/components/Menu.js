@@ -1,36 +1,43 @@
 import { Link } from 'react-router-dom'
+import { Button, AppBar, Toolbar, Box } from '@material-ui/core'
 
 const Menu = ({ user, handleLogout }) => {
-  const color = {
-    backgroundColor: '#cccccc',
-  }
-
-  const padding = {
-    padding: 5,
+  const style = {
+    textAlign: 'right',
   }
 
   const userElement = () => {
     if (user) {
       return (
-        <span>
-          {user.name} logged in
-          <button onClick={handleLogout}>logout</button>
-        </span>
+        <em style={style}>
+          {user.name} logged in{' '}
+          <Button
+            color="inherit"
+            variant="outlined"
+            size="small"
+            onClick={handleLogout}
+          >
+            logout
+          </Button>
+        </em>
       )
     }
     return null
   }
 
   return (
-    <div style={color}>
-      <Link style={padding} to="/">
-        Blogs
-      </Link>
-      <Link style={padding} to="/users">
-        Users
-      </Link>
-      {userElement()}
-    </div>
+    <AppBar position="static">
+      <Toolbar>
+        <Button color="inherit" component={Link} to="/">
+          Blogs
+        </Button>
+        <Button color="inherit" component={Link} to="/users">
+          Users
+        </Button>
+        <Box display="flex" flexGrow={1}></Box>
+        {userElement()}
+      </Toolbar>
+    </AppBar>
   )
 }
 

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import PropTypes from 'prop-types'
+import { TextField, Button } from '@material-ui/core'
 
 const BlogForm = ({ createBlog }) => {
   const [blogTitle, setBlogTitle] = useState('')
@@ -34,37 +35,36 @@ const BlogForm = ({ createBlog }) => {
   return (
     <div>
       <form onSubmit={addBlog}>
-        <h2>create new</h2>
-        <div>
-          title:
-          <input
-            value={blogTitle}
-            onChange={handleTitleChange}
-            id="blog-title-input"
-            data-cy="blog-title-input"
-          />
-        </div>
-        <div>
-          author:
-          <input
-            value={blogAuthor}
-            onChange={handleAuthorChange}
-            id="blog-author-input"
-            data-cy="blog-author-input"
-          />
-        </div>
-        <div>
-          url:
-          <input
-            value={blogUrl}
-            onChange={handleUrlChange}
-            id="blog-url-input"
-            data-cy="blog-url-input"
-          />
-          <button type="submit" data-cy="create-blog-button">
-            create
-          </button>
-        </div>
+        <h2>Create new</h2>
+        <TextField
+          required
+          variant="outlined"
+          label="Title"
+          value={blogTitle}
+          onChange={handleTitleChange}
+          id="blog-title-input"
+          data-cy="blog-title-input"
+        />
+        <TextField
+          variant="outlined"
+          label="Author"
+          value={blogAuthor}
+          onChange={handleAuthorChange}
+          id="blog-author-input"
+          data-cy="blog-author-input"
+        />
+        <TextField
+          variant="outlined"
+          id="blog-url-input"
+          label="url"
+          value={blogUrl}
+          onChange={handleUrlChange}
+          data-cy="blog-url-input"
+        />
+        <br />
+        <Button variant="outlined" type="submit" data-cy="create-blog-button">
+          create
+        </Button>
       </form>
     </div>
   )

@@ -1,6 +1,11 @@
 import { useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
+import { TextField, Button, List, ListItem } from '@material-ui/core'
+import IconButton from '@mui/material/IconButton'
+import ListItemIcon from '@mui/material/ListItemIcon'
+import FavoriteRoundedIcon from '@mui/icons-material/FavoriteRounded'
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline'
 import blogService from '../services/blogs'
 import { setBlogs } from '../reducers/blogReducer'
 import { useNotification } from '../hooks'
@@ -80,27 +85,46 @@ const Blog = ({ blog }) => {
         <a href={blog.url}>{blog.url}</a>
         <div>
           likes {blog.likes}
-          <button onClick={increaseLikes} data-cy="like-button">
-            like
-          </button>
+          <IconButton
+            size="small"
+            onClick={increaseLikes}
+            data-cy="like-button"
+          >
+            <FavoriteRoundedIcon style={{ color: 'red' }} />
+          </IconButton>
         </div>
-        <div>added by {blog.user ? blog.user.name : ''}</div>
+        <div>Added by {blog.user ? blog.user.name : 'Anonymous'}</div>
         {!blog.user || blog.user.username === username ? (
-          <button onClick={deleteBlog}>remove</button>
+          <Button variant="outlined" size="small" onClick={deleteBlog}>
+            remove
+          </Button>
         ) : (
           ''
         )}
       </div>
-      <h3>comments</h3>
+      <h3>Comments</h3>
       <form onSubmit={addComment}>
-        <input onChange={handleCommentChange} value={comment} />
-        <button type="submit">add comment</button>
+        <TextField
+          size="small"
+          label="Comment"
+          variant="outlined"
+          onChange={handleCommentChange}
+          value={comment}
+        />
+        <Button variant="outlined" type="submit">
+          add comment
+        </Button>
       </form>
-      <ul>
+      <List>
         {blog.comments.map((comment) => (
-          <li key={Math.random() * 1000}>{comment}</li>
+          <ListItem key={Math.random() * 1000}>
+            <ListItemIcon>
+              <ChatBubbleOutlineIcon />
+            </ListItemIcon>
+            {comment}
+          </ListItem>
         ))}
-      </ul>
+      </List>
     </div>
   )
 }

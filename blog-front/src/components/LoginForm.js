@@ -5,6 +5,7 @@ import loginService from '../services/login'
 import blogService from '../services/blogs'
 import { setUser } from '../reducers/userReducer'
 import { useNavigate } from 'react-router-dom'
+import { TextField, Button } from '@material-ui/core'
 
 const LoginForm = () => {
   const [username, setUsername] = useState('')
@@ -35,29 +36,33 @@ const LoginForm = () => {
     }
   }
 
+  const padding = {
+    padding: 20,
+  }
+
   return (
-    <form onSubmit={handleLogin}>
+    <form onSubmit={handleLogin} style={padding}>
       <div>
-        username
-        <input
+        <TextField
+          variant="outlined"
           type="text"
           value={username}
-          name="Username"
+          label="Username"
           onChange={({ target }) => setUsername(target.value)}
           data-cy="username-input"
         />
-      </div>
-      <div>
-        password
-        <input
+        <TextField
+          variant="outlined"
           type="password"
           value={password}
-          name="Password"
+          label="Password"
           onChange={({ target }) => setPassword(target.value)}
           data-cy="password-input"
         />
       </div>
-      <button type="submit">login</button>
+      <Button type="submit" variant="outlined">
+        login
+      </Button>
     </form>
   )
 }
