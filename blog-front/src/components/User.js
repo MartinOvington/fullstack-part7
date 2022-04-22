@@ -7,7 +7,7 @@ const User = ({ user }) => {
       <h3>Added blogs</h3>
       <List dense={false}>
         {user.blogs.map((blog) => (
-          <ListItem key={blog.id}>{blog.title}</ListItem>
+          <ListItem key={blog.id}>- {blog.title}</ListItem>
         ))}
       </List>
     </div>
